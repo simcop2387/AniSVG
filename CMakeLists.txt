@@ -25,7 +25,7 @@ include_directories(
    )
  
 # We add our source code here
-set(anisvg_SRCS anisvg.cpp)
+set(anisvg_SRCS anisvg.cpp glwidget.cpp glwidget.h)
  
 # Now make sure all files get to the right place
 kde4_add_plugin(plasma_wallpaper_anisvg ${anisvg_SRCS})

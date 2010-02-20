@@ -39,46 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef SVGVIEW_H
-#define SVGVIEW_H
+#include <QtOpenGL>
+#include <QImage>
+#include <QTimeLine>
+#include <QSvgRenderer>
 
-#include <QGraphicsView>
-
-QT_BEGIN_NAMESPACE
-class QWheelEvent;
-class QPaintEvent;
-class QFile;
-QT_END_NAMESPACE
-
-class SvgView : public QGraphicsView
+class GLWidget : public QGLWidget
 {
     Q_OBJECT
 
 public:
-    enum RendererType { Native, OpenGL, Image };
+    GLWidget(QWidget *parent);
+    ~GLWidget();
 
-    SvgView(QWidget *parent = 0);
+    void saveGLState();
+    void restoreGLState();
 
-    void openFile(const QFile &file);
-    void setRenderer(RendererType type = Native);
-    void drawBackground(QPainter *p, const QRectF &rect);
+    void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent *);
+    void mouseDoubleClickEvent(QMouseEvent *);
+    void mouseMoveEvent(QMouseEvent *);
+    void timerEvent(QTimerEvent *);
+    void wheelEvent(QWheelEvent *);
 
 public slots:
-    void setHighQualityAntialiasing(bool highQualityAntialiasing);
-    void setViewBackground(bool enable);
-    void setViewOutline(bool enable);
-
-protected:
-    void wheelEvent(QWheelEvent *event);
-    void paintEvent(QPaintEvent *event);
+    void animate(qreal);
+    void animFinished();
+    void draw();
 
 private:
-    RendererType m_renderer;
+    QPoint anchor;
+    float scale;
+    float rot_x, rot_y, rot_z;
+    GLuint tile_list;
+    GLfloat *wave;
 
-    QGraphicsItem *m_svgItem;
-    QGraphicsRectItem *m_backgroundItem;
-    QGraphicsRectItem *m_outlineItem;
-
-    QImage m_image;
+    QImage logo;
+    QTimeLine *anim;
+    QSvgRenderer *svg_renderer;
+    QGLFramebufferObject *render_fbo;
+    QGLFramebufferObject *texture_fbo;
 };
-#endif // SVGVIEW_H
+

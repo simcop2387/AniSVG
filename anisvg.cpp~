@@ -1,4 +1,5 @@
 #include "anisvg.h"
+#include "glwidget.h"
 #include <QPainter>
 #include <QFontMetrics>
 #include <QSizeF>
@@ -6,6 +7,11 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QPicture>
+//#include <QGLWidget>
+
+#include <GL/gl.h>
+
+extern "C" void glInit();
 
 #include <plasma/svg.h>
 #include <plasma/theme.h>
@@ -13,9 +19,9 @@
 AniSVG::AniSVG(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args)
 {
-     Q_INIT_RESOURCE(framebufferobject);
 
-    QApplication a(argc, argv);
+    glInit();
+
     if (!QGLFormat::hasOpenGL() || !QGLFramebufferObject::hasOpenGLFramebufferObjects()) {
 	QMessageBox::information(0, "OpenGL framebuffer objects",
 				 "This system does not support OpenGL/framebuffer objects.");
@@ -30,33 +36,35 @@ AniSVG::AniSVG(QObject *parent, const QVariantList &args)
 	printf("this is a widget\n");
 	else
 	printf("This is not a widget\n");
-	
-        render_fbo = new QGLFramebufferObject(1024, 1024);
+
+    GLWidget widget(0);
+    widget.resize(640, 480);
+    widget.show();
 //	setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
 	//pic->load("/home/ryan/projects/AniSVG/files/bubbles.svg", "svg");
 }
 
 void AniSVG::paint(QPainter *painter, const QRectF& exposedRect)
 {
-/*    painter->setBrush(Qt::white);
+    painter->setBrush(Qt::white);
     painter->drawRect(boundingRect());
  
     painter->setPen(Qt::blue);
     painter->setFont(QFont("Arial", 50));
     painter->drawText(boundingRect(), Qt::AlignCenter, "Hello World!");
     //painter->drawPicture(0, 0, *pic);
-    painter->setViewport(boundingRect().toRect());*/
+    painter->setViewport(boundingRect().toRect());
 
 //    saveGLState(); //needed apparently
 
-    QPainter fbo_painter(render_fbo);
-    pic->render(&fbo_painter);
+    //QPainter fbo_painter(render_fbo);
+    //pic->render(&fbo_painter);
     //svg_renderer->render(&fbo_painter);
-    fbo_painter.end();
+    //fbo_painter.end();
     
 //    restoreGLState(); //needed apparently
     
-    painter->drawImage(boundingRect(), render_fbo->toImage());
+    //painter->drawImage(boundingRect(), render_fbo->toImage());
 }
 
 void AniSVG::updateWallpaper() {
