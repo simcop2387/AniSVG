@@ -20,7 +20,7 @@ AniSVG::AniSVG(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args)
 {
 
-    glInit();
+//    glInit();
 
     if (!QGLFormat::hasOpenGL() || !QGLFramebufferObject::hasOpenGLFramebufferObjects()) {
 	QMessageBox::information(0, "OpenGL framebuffer objects",
